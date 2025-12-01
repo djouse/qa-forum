@@ -1,0 +1,136 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                  String               @id @default(cuid())
+  email               String               @unique
+  name                String
+  role                Role                 @default(STUDENT)
+  questions           Question[]
+  answers             Answer[]
+  disciplines         TeacherDiscipline[]  // Only for teachers
+  questionStateChanges QuestionStateChange[]
+  createdAt           DateTime             @default(now())
+}
+
+enum Role {
+  STUDENT
+  TEACHER
+}
+
+model Discipline {
+  id          String              @id @default(cuid())
+  name        String              @unique // "Português", "Matemática", etc.
+  questions   Question[]
+  teachers    TeacherDiscipline[]
+  createdAt   DateTime            @default(now())
+}
+
+// Junction table for teachers and their disciplines
+model TeacherDiscipline {
+  id           String     @id @default(cuid())
+  teacher      User       @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  teacherId    String
+  discipline   Discipline @relation(fields: [disciplineId], references: [id], onDelete: Cascade)
+  disciplineId String
+  createdAt    DateTime   @default(now())
+
+  @@unique([teacherId, disciplineId])
+}
+
+model Question {
+  id           String                @id @default(cuid())
+  title        String
+  content      String
+  state        QuestionState         @default(ACTIVE)
+  gradeYear    Int                   // 7-12
+  
+  author       User                  @relation(fields: [authorId], references: [id])
+  authorId     String
+  
+  discipline   Discipline            @relation(fields: [disciplineId], references: [id])
+  disciplineId String
+  
+  answers      Answer[]
+  attachments  QuestionAttachment[]
+  stateChanges QuestionStateChange[]
+  
+  createdAt    DateTime              @default(now())
+  updatedAt    DateTime              @updatedAt
+
+  @@index([state])
+  @@index([disciplineId])
+  @@index([gradeYear])
+}
+
+enum QuestionState {
+  ACTIVE
+  RESOLVED
+  CANCELED
+}
+
+// Track state changes with summary/reason
+model QuestionStateChange {
+  id           String        @id @default(cuid())
+  question     Question      @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  questionId   String
+  changedBy    User          @relation(fields: [changedById], references: [id])
+  changedById  String
+  fromState    QuestionState
+  toState      QuestionState
+  summary      String?       // Reason for RESOLVED or CANCELED
+  createdAt    DateTime      @default(now())
+
+  @@index([questionId])
+}
+
+model Answer {
+  id          String             @id @default(cuid())
+  content     String
+  question    Question           @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  questionId  String
+  author      User               @relation(fields: [authorId], references: [id])
+  authorId    String
+  attachments AnswerAttachment[]
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  @@index([questionId])
+}
+
+// Attachments for questions
+model QuestionAttachment {
+  id         String   @id @default(cuid())
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  questionId String
+  fileName   String   // Original file name
+  fileUrl    String   // Vercel Blob URL or other storage URL
+  fileType   String   // MIME type (image/png, application/pdf, etc.)
+  fileSize   Int      // Size in bytes
+  createdAt  DateTime @default(now())
+
+  @@index([questionId])
+}
+
+// Attachments for answers
+model AnswerAttachment {
+  id        String   @id @default(cuid())
+  answer    Answer   @relation(fields: [answerId], references: [id], onDelete: Cascade)
+  answerId  String
+  fileName  String   // Original file name
+  fileUrl   String   // Vercel Blob URL or other storage URL
+  fileType  String   // MIME type (image/png, application/pdf, etc.)
+  fileSize  Int      // Size in bytes
+  createdAt DateTime @default(now())
+
+  @@index([answerId])
+}
