@@ -1,8 +1,11 @@
 <template>
   <div>
     <!-- Ask Question Button (Students Only) -->
-    <div v-if="!currentUser.name" class="mb-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-      <p class="text-yellow-800">👆 Please register above to get started</p>
+    <div v-if="!isAuthenticated" class="mb-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+      <p class="text-yellow-800">
+        👆 Please <NuxtLink to="/auth/login" class="text-blue-600 hover:text-blue-700 font-medium">sign in</NuxtLink> or 
+        <NuxtLink to="/auth/register" class="text-blue-600 hover:text-blue-700 font-medium">register</NuxtLink> to get started
+      </p>
     </div>
     
     <div v-else-if="isStudent" class="mb-6">
@@ -107,7 +110,44 @@
 
     <!-- Questions List -->
     <div v-else class="space-y-4">
-      <h2 class="text-2xl font-bold mb-4">Recent Questions</h2>
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-2xl font-bold">Recent Questions</h2>
+        
+        <!-- Filters -->
+        <div class="flex gap-3">
+          <select
+            v-model="selectedDiscipline"
+            @change="applyFilters"
+            class="px-3 py-1 border border-gray-300 rounded text-sm"
+          >
+            <option value="">All Disciplines</option>
+            <option v-for="discipline in disciplines" :key="discipline.id" :value="discipline.id">
+              {{ discipline.name }}
+            </option>
+          </select>
+          
+          <select
+            v-model="selectedGrade"
+            @change="applyFilters"
+            class="px-3 py-1 border border-gray-300 rounded text-sm"
+          >
+            <option value="">All Grades</option>
+            <option v-for="grade in [7, 8, 9, 10, 11, 12]" :key="grade" :value="grade">
+              {{ grade }}º ano
+            </option>
+          </select>
+          
+          <select
+            v-model="orderBy"
+            @change="applyFilters"
+            class="px-3 py-1 border border-gray-300 rounded text-sm"
+          >
+            <option value="">Recent First</option>
+            <option value="discipline">By Discipline</option>
+            <option value="gradeYear">By Grade</option>
+          </select>
+        </div>
+      </div>
       
       <div
         v-for="question in questions"
@@ -150,6 +190,29 @@
       <div v-if="questions.length === 0" class="text-center py-12 text-gray-500">
         No questions yet. Be the first to ask!
       </div>
+      
+      <!-- Pagination -->
+      <div v-if="pagination && pagination.totalPages > 1" class="flex items-center justify-center gap-4 mt-8">
+        <button
+          @click="prevPage"
+          :disabled="!pagination.hasPrev"
+          class="px-4 py-2 border rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Previous
+        </button>
+        
+        <span class="text-sm text-gray-600">
+          Page {{ pagination.page }} of {{ pagination.totalPages }} ({{ pagination.total }} total)
+        </span>
+        
+        <button
+          @click="nextPage"
+          :disabled="!pagination.hasNext"
+          class="px-4 py-2 border rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Next
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -160,13 +223,18 @@ import { useRouter } from 'vue-router'
 import { useUser } from '~/composables/useUser'
 
 const router = useRouter()
-const { currentUser, isStudent, isTeacher } = useUser()
+const { currentUser, isAuthenticated, isStudent, isTeacher } = useUser()
 
 const showQuestionForm = ref(false)
 const loading = ref(true)
 const error = ref('')
 const submitting = ref(false)
 const submitError = ref('')
+const currentPage = ref(1)
+const selectedDiscipline = ref('')
+const selectedGrade = ref('')
+const orderBy = ref('')
+const pagination = ref(null)
 
 interface Discipline {
   id: string
@@ -207,15 +275,42 @@ const fetchQuestions = async () => {
   error.value = ''
   
   try {
-    const response = await $fetch<{ success: boolean; questions: Question[] }>('/api/questions')
+    const params = new URLSearchParams({
+      page: currentPage.value.toString(),
+      ...(selectedDiscipline.value && { disciplineId: selectedDiscipline.value }),
+      ...(selectedGrade.value && { gradeYear: selectedGrade.value }),
+      ...(orderBy.value && { orderBy: orderBy.value })
+    })
+    
+    const response = await $fetch(`/api/questions?${params}`)
     if (response.success) {
       questions.value = response.questions
+      pagination.value = response.pagination
     }
   } catch (err: any) {
     error.value = err.data?.message || 'Failed to load questions'
   } finally {
     loading.value = false
   }
+}
+
+const nextPage = () => {
+  if (pagination.value?.hasNext) {
+    currentPage.value++
+    fetchQuestions()
+  }
+}
+
+const prevPage = () => {
+  if (pagination.value?.hasPrev) {
+    currentPage.value--
+    fetchQuestions()
+  }
+}
+
+const applyFilters = () => {
+  currentPage.value = 1
+  fetchQuestions()
 }
 
 const fetchDisciplines = async () => {
@@ -230,7 +325,7 @@ const fetchDisciplines = async () => {
 }
 
 const submitQuestion = async () => {
-  if (!currentUser.value.id) {
+  if (!currentUser.value?.id) {
     submitError.value = 'Please register first'
     return
   }
@@ -251,7 +346,7 @@ const submitQuestion = async () => {
         content: newQuestion.value.content,
         disciplineId: newQuestion.value.disciplineId,
         gradeYear: parseInt(newQuestion.value.gradeYear),
-        authorId: currentUser.value.id
+        authorId: currentUser.value!.id
       }
     })
 

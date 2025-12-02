@@ -3,60 +3,49 @@
     <header class="bg-white shadow-sm">
       <div class="max-w-5xl mx-auto px-4 py-4">
         <div class="flex items-center justify-between">
-          <div>
+          <NuxtLink to="/" class="flex flex-col">
             <h1 class="text-2xl font-bold text-gray-900">Q&A Forum</h1>
             <p class="text-sm text-gray-600">Ask questions, share knowledge</p>
-          </div>
+          </NuxtLink>
           
           <!-- User Profile Section -->
           <div class="flex items-center gap-4">
-            <div v-if="!currentUser.name" class="flex gap-2">
-              <input
-                v-model="userName"
-                type="text"
-                placeholder="Your name"
-                required
-                class="px-3 py-2 border border-gray-300 rounded-lg text-sm"
-              />
-              <input
-                v-model="userEmail"
-                type="email"
-                placeholder="Your email"
-                required
-                class="px-3 py-2 border border-gray-300 rounded-lg text-sm"
-              />
-              <select
-                v-model="userRole"
-                class="px-3 py-2 border border-gray-300 rounded-lg text-sm"
+            <div v-if="!isAuthenticated" class="flex gap-2">
+              <NuxtLink
+                to="/auth/login"
+                class="px-4 py-2 text-gray-700 hover:text-gray-900 font-medium"
               >
-                <option value="STUDENT">Student</option>
-                <option value="TEACHER">Teacher</option>
-              </select>
-              <button
-                @click="registerUser"
-                :disabled="registering"
-                class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 disabled:opacity-50"
+                Sign In
+              </NuxtLink>
+              <NuxtLink
+                to="/auth/register"
+                class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
               >
-                {{ registering ? 'Registering...' : 'Register' }}
-              </button>
-            </div>
-            <div v-if="registerError" class="text-red-600 text-sm">
-              {{ registerError }}
+                Register
+              </NuxtLink>
             </div>
             
-            <div v-else class="flex items-center gap-3">
-              <div class="text-right">
-                <p class="font-medium text-gray-900">{{ currentUser.name }}</p>
-                <p class="text-xs text-gray-600">
-                  {{ currentUser.role === 'STUDENT' ? '🎓 Student' : '👨‍🏫 Teacher' }}
-                </p>
-              </div>
-              <button
-                @click="logout"
+            <div v-else class="flex items-center gap-4">
+              <NuxtLink 
+                to="/my-questions"
                 class="text-sm text-gray-600 hover:text-gray-900"
               >
-                Logout
-              </button>
+                My Questions
+              </NuxtLink>
+              <div class="flex items-center gap-3">
+                <div class="text-right">
+                  <p class="font-medium text-gray-900">{{ currentUser?.name }}</p>
+                  <p class="text-xs text-gray-600">
+                    {{ currentUser?.role === 'STUDENT' ? '🎓 Student' : '👨‍🏫 Teacher' }}
+                  </p>
+                </div>
+                <button
+                  @click="handleLogout"
+                  class="text-sm text-gray-600 hover:text-gray-900"
+                >
+                  Logout
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -70,50 +59,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useUser, type UserRole, type User } from '~/composables/useUser'
+import { useRouter } from 'vue-router'
+import { useUser } from '~/composables/useUser'
 
-const { currentUser, setUser } = useUser()
-const userName = ref<string>('')
-const userEmail = ref<string>('')
-const userRole = ref<UserRole>('STUDENT')
-const registering = ref(false)
-const registerError = ref('')
+const router = useRouter()
+const { currentUser, isAuthenticated, logout } = useUser()
 
-const registerUser = async () => {
-  if (!userName.value.trim() || !userEmail.value.trim()) {
-    registerError.value = 'Please fill in all fields'
-    return
-  }
-
-  registering.value = true
-  registerError.value = ''
-
-  try {
-    const response = await $fetch<{ success: boolean; user: User }>('/api/users', {
-      method: 'POST',
-      body: {
-        name: userName.value,
-        email: userEmail.value,
-        role: userRole.value
-      }
-    })
-
-    if (response.success && response.user) {
-      setUser(response.user.id, response.user.name, response.user.role)
-    }
-  } catch (error: any) {
-    registerError.value = error.data?.message || 'Failed to register user'
-  } finally {
-    registering.value = false
-  }
-}
-
-const logout = () => {
-  setUser('', '', 'STUDENT')
-  userName.value = ''
-  userEmail.value = ''
-  userRole.value = 'STUDENT'
-  registerError.value = ''
+const handleLogout = () => {
+  logout()
+  router.push('/auth/login')
 }
 </script>
