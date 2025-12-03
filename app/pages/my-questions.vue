@@ -1,8 +1,19 @@
 <template>
   <div>
-    <div class="mb-6">
-      <h1 class="text-3xl font-bold text-gray-900 mb-2">My Questions</h1>
-      <p class="text-gray-600">Questions you've asked</p>
+    <div class="mb-12">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h1 class="text-5xl md:text-6xl font-bold mb-4" style="color: var(--m-green);">My Questions</h1>
+          <p class="text-xl md:text-2xl" style="color: var(--grey-m5);">Questions you've asked</p>
+        </div>
+        <NuxtLink
+          to="/ask-question"
+          class="text-white px-8 py-3 rounded-full text-lg font-semibold transition"
+          style="background-color: var(--orange);"
+        >
+          Ask New Question
+        </NuxtLink>
+      </div>
     </div>
 
     <!-- Redirect to login if not authenticated -->
@@ -18,14 +29,14 @@
 
     <!-- Loading State -->
     <div v-else-if="loading" class="text-center py-12">
-      <div class="inline-block animate-spin h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full"></div>
-      <p class="mt-4 text-gray-600">Loading your questions...</p>
+      <div class="inline-block animate-spin h-8 w-8 border-4 rounded-full" style="border-color: var(--orange); border-top-color: transparent;"></div>
+      <p class="mt-4" style="color: var(--grey-m5);">Loading your questions...</p>
     </div>
 
     <!-- Error State -->
     <div v-else-if="error" class="text-center py-12">
-      <p class="text-red-600">{{ error }}</p>
-      <button @click="fetchMyQuestions" class="mt-4 text-blue-600 hover:text-blue-700">
+      <p style="color: var(--orange);">{{ error }}</p>
+      <button @click="fetchMyQuestions" class="mt-4" style="color: var(--orange);">
         Try again
       </button>
     </div>
@@ -35,11 +46,12 @@
       <div
         v-for="question in questions"
         :key="question.id"
-        class="bg-white rounded-lg shadow p-6 hover:shadow-md transition cursor-pointer"
+        class="rounded-3xl p-6 hover:scale-103 transition cursor-pointer"
+        style="background-color: var(--light-gray);"
         @click="navigateToQuestion(question.id)"
       >
         <div class="flex items-start justify-between mb-2">
-          <h3 class="text-lg font-semibold text-gray-900 flex-1">
+          <h3 class="text-xl font-semibold flex-1" style="color: var(--m-green);">
             {{ question.title }}
           </h3>
           <span 
@@ -53,14 +65,14 @@
             {{ question.state }}
           </span>
         </div>
-        <p class="text-gray-600 mb-3 line-clamp-2">
+        <p class="mb-3 line-clamp-2" style="color: var(--grey-m5);">
           {{ question.content }}
         </p>
-        <div class="flex items-center justify-between text-sm text-gray-500">
+        <div class="flex items-center justify-between text-sm" style="color: var(--grey-m5);">
           <div class="flex items-center gap-4">
-            <span>💬 {{ question.answerCount }} answers</span>
+            <span>{{ question.answerCount }} answers</span>
             <span class="text-gray-400">•</span>
-            <span>📚 {{ question.discipline.name }}</span>
+            <span>{{ question.discipline.name }}</span>
             <span class="text-gray-400">•</span>
             <span>{{ question.gradeYear }}º ano</span>
           </div>
@@ -68,11 +80,12 @@
         </div>
       </div>
 
-      <div v-if="questions.length === 0" class="text-center py-12 text-gray-500">
-        <p class="mb-4">You haven't asked any questions yet.</p>
+      <div v-if="questions.length === 0" class="text-center py-12" style="color: var(--grey-m5);">
+        <p class="mb-6 text-xl">You haven't asked any questions yet.</p>
         <NuxtLink
-          to="/"
-          class="inline-block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+          to="/ask-question"
+          class="inline-block text-white px-8 py-3 rounded-full text-lg font-semibold transition"
+          style="background-color: var(--orange);"
         >
           Ask Your First Question
         </NuxtLink>

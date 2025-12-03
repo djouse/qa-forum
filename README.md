@@ -1,6 +1,41 @@
-# Nuxt Minimal Starter
+# QA Forum - Student-Teacher Q&A Platform
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+Nuxt.js application using Prisma ORM - QA Forum for students to ask questions and teachers to provide the answers.
+
+## Evaluation Instructions
+
+### User Roles and Login
+
+**Student Account:**
+- Can overview all recent questions and navigate to login or register pages.
+- Have an overview of the forum in a hero container.
+
+**Student Account:**
+- Register as a student or use existing student credentials (development login is available so that testers can do it faster eheh)
+- Can ask and view questions, and see and add answers
+- Access to "Ask Question" page and "My Questions" dashboard
+- Cannot answer questions or manage question states (maybe they should be able to answer to be more interactive??)
+
+**Teacher Account:**
+- Register as a teacher or use existing teacher credentials  
+- Can view questions in their assigned disciplines
+- Can answer questions and mark them as resolved/canceled
+- Access to "Teacher Dashboard" with discipline-specific question filtering
+- Cannot ask questions (teacher role restriction)
+
+### Key Features to Test
+
+1. **Fake Authentication Flow:** Register/login as both student and teacher using the normal prisma DB without OAuth2.0
+2. **Student Experience:** Ask questions, view personal questions, browse all questions
+3. **Teacher Experience:** Answer questions, filter by discipline, manage question states
+4. **Question Management:** View question details, add answers, state transitions
+5. **Responsive Design:** Test on mobile and desktop viewports
+
+### Navigation Differences
+
+- **Students:** Home → Ask Question → My Questions → Question Details
+- **Teachers:** Home → Teacher Dashboard → Question Details (with management options)
+- **Unauthenticated:** Home (browse only) → Login/Register
 
 ## Setup
 
@@ -9,13 +44,10 @@ Make sure to install dependencies:
 ```bash
 # npm
 npm install
-
 # pnpm
 pnpm install
-
 # yarn
 yarn install
-
 # bun
 bun install
 ```

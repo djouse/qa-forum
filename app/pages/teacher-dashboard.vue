@@ -1,20 +1,20 @@
 <template>
   <div>
-    <h1 class="text-3xl font-bold mb-8" style="color: #333;">Teacher Dashboard</h1>
+    <h1 class="text-5xl md:text-6xl font-bold mb-12" style="color: var(--m-green);">Teacher Dashboard</h1>
 
     <!-- My Disciplines -->
-    <div class="mb-8">
-      <h2 class="text-2xl font-bold mb-4" style="color: #333;">My Disciplines</h2>
+    <div class="mb-12">
+      <h2 class="text-3xl md:text-4xl font-bold mb-8" style="color: var(--m-green);">My Disciplines</h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div
           v-for="discipline in myDisciplines"
           :key="discipline.id"
-          class="p-4 rounded-lg border cursor-pointer transition hover:shadow-md"
-          style="background-color: var(--light-gray); border-color: var(--grey);"
+          class="p-6 rounded-3xl cursor-pointer transition hover:scale-105"
+          style="background-color: var(--light-gray);"
           @click="filterByDiscipline(discipline.id)"
         >
-          <h3 class="font-semibold" style="color: #333;">{{ discipline.name }}</h3>
-          <p class="text-sm" style="color: var(--grey-m5);">
+          <h3 class="font-semibold text-xl" style="color: var(--m-green);">{{ discipline.name }}</h3>
+          <p class="text-lg" style="color: var(--grey-m5);">
             {{ getQuestionCount(discipline.id) }} open questions
           </p>
         </div>
@@ -23,8 +23,8 @@
 
     <!-- Open Questions to Answer -->
     <div>
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="text-2xl font-bold" style="color: #333;">Open Questions to Answer</h2>
+      <div class="flex items-center justify-between mb-8">
+        <h2 class="text-3xl md:text-4xl font-bold" style="color: var(--m-green);">Open Questions to Answer</h2>
         <div class="flex gap-3">
           <select
             v-model="selectedDisciplineFilter"
@@ -58,12 +58,12 @@
         <div
           v-for="question in filteredQuestions"
           :key="question.id"
-          class="rounded-lg shadow p-6 hover:shadow-md transition cursor-pointer"
+          class="rounded-3xl p-6 hover:scale-103 transition cursor-pointer"
           style="background-color: var(--light-gray);"
           @click="navigateToQuestion(question.id)"
         >
           <div class="flex items-start justify-between mb-2">
-            <h3 class="text-lg font-semibold flex-1" style="color: #333;">
+            <h3 class="text-xl font-semibold flex-1" style="color: var(--m-green);">
               {{ question.title }}
             </h3>
             <span class="ml-4 px-4 py-1 text-xs rounded-full bg-green-100 text-green-800">
@@ -75,9 +75,9 @@
           </p>
           <div class="flex items-center justify-between text-sm" style="color: var(--grey-m5);">
             <div class="flex items-center gap-4">
-              <span>💬 {{ question.answerCount }} answers</span>
+              <span>{{ question.answerCount }} answers</span>
               <span class="text-gray-400">•</span>
-              <span>📚 {{ question.discipline.name }}</span>
+              <span>{{ question.discipline.name }}</span>
               <span class="text-gray-400">•</span>
               <span>{{ question.gradeYear }}º ano</span>
               <span class="text-gray-400">•</span>

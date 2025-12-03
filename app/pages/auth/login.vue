@@ -1,12 +1,12 @@
 <template>
-  <div class="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+  <div class="min-h-screen bg-gray-50 flex items-center justify-center px-4 rounded-4xl">
     <div class="max-w-md w-full">
       <div class="text-center mb-8">
-        <h1 class="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h1>
-        <p class="text-gray-600">Sign in to your Q&A Forum account</p>
+        <h1 class="text-3xl font-semibold text-gray-900 mb-2" style="color: var(--m-green);">Welcome Back</h1>
+        <p class="text-gray-600" style="color: var(--m-green);">Sign in to your Q&A Forum account</p>
       </div>
 
-      <div class="bg-white rounded-lg shadow-lg p-8">
+      <div class="bg-white rounded-4xl p-8">
         <form @submit.prevent="handleLogin">
           <div class="mb-4">
             <label class="block text-sm font-medium text-gray-700 mb-2">

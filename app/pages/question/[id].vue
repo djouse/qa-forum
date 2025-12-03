@@ -11,28 +11,26 @@
 
     <!-- Loading State -->
     <div v-if="loading" class="text-center py-12">
-      <div class="inline-block animate-spin h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full"></div>
-      <p class="mt-4 text-gray-600">Loading question...</p>
+      <div class="inline-block animate-spin h-8 w-8 border-4 rounded-full" style="border-color: var(--orange); border-top-color: transparent;"></div>
+      <p class="mt-4" style="color: var(--grey-m5);">Loading question...</p>
     </div>
 
     <!-- Error State -->
     <div v-else-if="error" class="text-center py-12">
-      <p class="text-red-600">{{ error }}</p>
-      <button @click="fetchQuestion" class="mt-4 text-blue-600 hover:text-blue-700">
+      <p style="color: var(--orange);">{{ error }}</p>
+      <button @click="fetchQuestion" class="mt-4" style="color: var(--orange);">
         Try again
       </button>
     </div>
 
-    <!-- Question Content -->
     <div v-else-if="question">
-      <!-- Question Card -->
-      <div class="bg-white rounded-lg shadow p-6 mb-6">
+      <div class="rounded-3xl p-6 mb-6" style="background-color: var(--light-gray);">
         <div class="flex items-start justify-between mb-4">
-          <h1 class="text-3xl font-bold text-gray-900 flex-1">
+          <h1 class="text-4xl font-semibold flex-1" style="color: var(--m-green);">
             {{ question.title }}
           </h1>
           <span 
-            class="ml-4 px-3 py-1 text-sm rounded-full"
+            class="ml-4 px-3 py-1 text-sm rounded-full gap-10"
             :class="{
               'bg-green-100 text-green-800': question.state === 'ACTIVE',
               'bg-blue-100 text-blue-800': question.state === 'RESOLVED',
@@ -43,18 +41,16 @@
           </span>
         </div>
         
-        <p class="text-gray-700 mb-4 whitespace-pre-wrap">
+        <p class="mb-4 whitespace-pre-wrap" style="color: var(--grey-m5);">
           {{ question.content }}
         </p>
 
-        <!-- Question Metadata -->
-        <div class="flex items-center gap-4 text-sm text-gray-600 mb-4">
-          <span>📚 {{ question.discipline.name }}</span>
+        <div class="flex items-center gap-6 text-sm mb-4" style="color: var(--grey-m5);">
+          <span>{{ question.discipline.name }}</span>
           <span class="text-gray-400">•</span>
           <span>{{ question.gradeYear }}º ano</span>
         </div>
 
-        <!-- Attachments -->
         <div v-if="question.attachments && question.attachments.length > 0" class="mb-4">
           <h3 class="text-sm font-medium text-gray-700 mb-2">Attachments:</h3>
           <div class="space-y-2">
@@ -106,7 +102,6 @@
         </div>
       </div>
 
-      <!-- Answers Section -->
       <div class="mb-6">
         <h2 class="text-2xl font-bold mb-4">
           {{ question.answers.length }} {{ question.answers.length === 1 ? 'Answer' : 'Answers' }}
@@ -117,7 +112,8 @@
           <div
             v-for="answer in question.answers"
             :key="answer.id"
-            class="bg-white rounded-lg shadow p-6"
+            class="rounded-3xl p-6"
+            style="background-color: var(--light-gray);"
           >
             <p class="text-gray-700 mb-3 whitespace-pre-wrap">
               {{ answer.content }}
@@ -170,23 +166,27 @@
         </p>
       </div>
       
-      <div v-else class="bg-white rounded-lg shadow p-6">
-        <h3 class="text-xl font-semibold mb-4">Your Answer</h3>
+      <div v-else class="rounded-3xl p-6" style="background-color: var(--light-gray);">
+        <h3 class="text-xl font-semibold mb-4" style="color: var(--m-green);">Your Answer</h3>
         <form @submit.prevent="submitAnswer">
           <textarea
             v-model="newAnswer"
             required
             rows="6"
-            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-4"
+            class="w-full px-3 py-2 border rounded-lg transition mb-4"
+            style="border-color: var(--grey);"
+            @focus="($event.target as HTMLTextAreaElement).style.borderColor = 'var(--orange)'"
+            @blur="($event.target as HTMLTextAreaElement).style.borderColor = 'var(--grey)'"
             placeholder="Share your knowledge..."
           ></textarea>
-          <div v-if="submitError" class="mb-4 text-sm text-red-600">
+          <div v-if="submitError" class="mb-4 text-sm" style="color: var(--orange);">
             {{ submitError }}
           </div>
           <button
             type="submit"
             :disabled="submitting"
-            class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
+            class="text-white px-6 py-2 rounded-lg transition disabled:opacity-50"
+            style="background-color: var(--orange);"
           >
             {{ submitting ? 'Submitting...' : 'Submit Answer' }}
           </button>
@@ -195,65 +195,61 @@
     </div>
 
     <!-- State Change Modal -->
-    <div v-if="showStateModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div class="bg-white rounded-lg p-6 w-full max-w-md mx-4">
-        <h3 class="text-lg font-semibold mb-4">
-          {{ pendingState === 'RESOLVED' ? 'Mark as Resolved' : 'Cancel Question' }}
-        </h3>
-        <p class="text-gray-600 mb-4">
-          Please provide a justification for this action:
-        </p>
-        <textarea
-          v-model="stateJustification"
-          rows="4"
-          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
-          style="--tw-ring-color: #114F55;"
-          placeholder="Explain why you are changing the state for this question..."
-        ></textarea>
-        <div class="flex gap-3 mt-4">
-          <button
-            @click="confirmStateChange"
-            :disabled="updatingState"
-            class="text-white px-4 py-2 rounded transition hover:opacity-90 disabled:opacity-50"
-            style="background-color: #114F55;"
-          >
-            {{ updatingState ? 'Updating...' : 'Confirm' }}
-          </button>
-          <button
-            @click="closeStateModal"
-            class="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400 transition"
-          >
-            Cancel
-          </button>
-        </div>
+    <Modal :show="showStateModal" size="large" @close="closeStateModal">
+      <h3 class="text-lg font-semibold mb-4">
+        {{ pendingState === 'RESOLVED' ? 'Mark as Resolved' : 'Cancel Question' }}
+      </h3>
+      <p class="text-gray-600 mb-4">
+        Please provide a justification for this action:
+      </p>
+      <textarea
+        v-model="stateJustification"
+        rows="4"
+        class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
+        style="--tw-ring-color: #114F55;"
+        placeholder="Explain why you are changing the state for this question..."
+      ></textarea>
+      <div class="flex gap-3 mt-4">
+        <button
+          @click="confirmStateChange"
+          :disabled="updatingState"
+          class="text-white px-4 py-2 rounded transition hover:opacity-90 disabled:opacity-50"
+          style="background-color: #114F55;"
+        >
+          {{ updatingState ? 'Updating...' : 'Confirm' }}
+        </button>
+        <button
+          @click="closeStateModal"
+          class="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400 transition"
+        >
+          Cancel
+        </button>
       </div>
-    </div>
+    </Modal>
 
-    <!-- Confirmation Modal for Empty Justification -->
-    <div v-if="showConfirmModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div class="bg-white rounded-lg p-6 w-full max-w-md mx-4">
-        <h3 class="text-lg font-semibold mb-4">Confirm Action</h3>
-        <p class="text-gray-600 mb-4">
-          You are about to {{ pendingState === 'RESOLVED' ? 'resolve' : 'cancel' }} this question without providing a justification. Are you sure?
-        </p>
-        <div class="flex gap-3">
-          <button
-            @click="proceedWithoutJustification"
-            :disabled="updatingState"
-            class="text-white px-4 py-2 rounded transition hover:opacity-90 disabled:opacity-50"
-            style="background-color: #114F55;"
-          >
-            {{ updatingState ? 'Updating...' : 'Yes, Proceed' }}
-          </button>
-          <button
-            @click="closeConfirmModal"
-            class="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400 transition"
-          >
-            Cancel
-          </button>
-        </div>
+    <!-- Confirmation Modal -->
+    <Modal :show="showConfirmModal" size="large" @close="closeConfirmModal">
+      <h3 class="text-lg font-semibold mb-4">Confirm Action</h3>
+      <p class="text-gray-600 mb-4">
+        You are about to {{ pendingState === 'RESOLVED' ? 'resolve' : 'cancel' }} this question without providing a justification. Are you sure?
+      </p>
+      <div class="flex gap-3">
+        <button
+          @click="proceedWithoutJustification"
+          :disabled="updatingState"
+          class="text-white px-4 py-2 rounded transition hover:opacity-90 disabled:opacity-50"
+          style="background-color: #114F55;"
+        >
+          {{ updatingState ? 'Updating...' : 'Yes, Proceed' }}
+        </button>
+        <button
+          @click="closeConfirmModal"
+          class="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400 transition"
+        >
+          Cancel
+        </button>
       </div>
-    </div>
+    </Modal>
   </div>
 </template>
 

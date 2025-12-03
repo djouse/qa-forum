@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen bg-white">
       <header class="bg-white">
-        <div class="max-w-5xl mx-auto px-4 h-20 md:h-32 flex items-center justify-between">
+        <div class="max-w-8/10 mx-auto px-4 h-20 md:h-32 flex items-center justify-between">
           <NuxtLink to="/" class="flex items-center gap-2 md:gap-4">
             <img src="/intuitivo-forum-logo.svg" alt="Forum Logo" class="h-10 md:h-14 w-auto" />
             <div class="flex flex-col leading-tight">
@@ -15,7 +15,7 @@
             <template v-if="!isAuthenticated">
               <NuxtLink
                 to="/auth/login"
-                class="px-3 md:px-6 py-2 md:py-3 text-white text-xs md:text-sm rounded-xl transition inline-flex items-center"
+                class="px-3 md:px-6 py-2 md:py-3 text-white text-xs md:text-sm rounded-full transition inline-flex items-center"
                 style="background-color: var(--m-green);"
                 @mouseenter="($event.target as HTMLElement)?.style && (($event.target as HTMLElement).style.opacity = '0.9')"
                 @mouseleave="($event.target as HTMLElement)?.style && (($event.target as HTMLElement).style.opacity = '1')"
@@ -24,8 +24,8 @@
               </NuxtLink>
               <NuxtLink
                 to="/auth/register"
-                class="px-3 md:px-6 py-2 md:py-3 text-xs md:text-sm rounded-xl transition inline-flex items-center"
-                style="background-color: var(--grey); color: #333;"
+                class="px-3 md:px-6 py-2 md:py-3 text-xs md:text-sm rounded-full transition inline-flex items-center"
+                style="background-color: var(--grey); color: var(--m-green);"
                 @mouseenter="($event.target as HTMLElement)?.style && (($event.target as HTMLElement).style.opacity = '0.9')"
                 @mouseleave="($event.target as HTMLElement)?.style && (($event.target as HTMLElement).style.opacity = '1')"
               >
@@ -34,67 +34,60 @@
             </template>
 
             <template v-else>
-              <NuxtLink
-                :to="currentUser?.role === 'TEACHER' ? '/teacher-dashboard' : '/my-questions'"
-                class="hidden md:block text-sm transition px-3 py-1.5 rounded-lg"
-                style="color: var(--grey-m5); background-color: rgba(153, 153, 153, 0.15);"
-                @mouseenter="($event.target as HTMLElement)?.style && (($event.target as HTMLElement).style.backgroundColor = 'rgba(153, 153, 153, 0.25)')"
-                @mouseleave="($event.target as HTMLElement)?.style && (($event.target as HTMLElement).style.backgroundColor = 'rgba(153, 153, 153, 0.15)')"
-              >
-                {{ currentUser?.role === 'TEACHER' ? 'Teacher Dashboard' : 'My Questions' }}
-              </NuxtLink>
-              <div class="flex items-center gap-2 md:gap-3 px-3 md:px-6 py-2 md:py-3 rounded-xl" style="background-color: var(--m-green);">
-                <NuxtLink
-                  :to="currentUser?.role === 'TEACHER' ? '/teacher-dashboard' : '/my-questions'"
-                  class="md:hidden text-right leading-tight flex-1"
-                >
-                  <p class="text-xs font-medium" style="color: var(--green);">
+              <div class="flex items-center gap-3 md:gap-4 px-4 md:px-6 py-2 md:py-3 rounded-full" style="background-color: var(--grey);">
+                <div class="text-right leading-tight">
+                  <p class="text-xs md:text-sm font-medium" style="color: var(--m-green);">
                     {{ currentUser?.name }}
                   </p>
-                  <p class="text-[10px]" style="color: var(--green); opacity: 0.8;">
-                    {{ currentUser?.role === 'STUDENT' ? 'Student' : 'Teacher' }}
-                  </p>
-                </NuxtLink>
-                <div class="hidden md:block text-right leading-tight">
-                  <p class="text-sm font-medium" style="color: var(--green);">
-                    {{ currentUser?.name }}
-                  </p>
-                  <p class="text-[11px]" style="color: var(--green); opacity: 0.8;">
+                  <p class="text-[10px] md:text-xs" style="color: var(--grey-m5);">
                     {{ currentUser?.role === 'STUDENT' ? 'Student' : 'Teacher' }}
                   </p>
                 </div>
-                <button
-                  @click="handleLogout"
-                  class="text-xs md:text-sm transition px-2 md:px-3 py-1 md:py-1.5 rounded-lg"
-                  style="color: var(--green); background-color: rgba(125, 216, 137, 0.15);"
-                  @mouseenter="($event.target as HTMLElement)?.style && (($event.target as HTMLElement).style.backgroundColor = 'rgba(125, 216, 137, 0.25)')"
-                  @mouseleave="($event.target as HTMLElement)?.style && (($event.target as HTMLElement).style.backgroundColor = 'rgba(125, 216, 137, 0.15)')"
+
+                <NuxtLink
+                  :to="currentUser?.role === 'TEACHER' ? '/teacher-dashboard' : '/my-questions'"
+                  class="px-3 md:px-4 py-2 text-xs md:text-sm rounded-full transition"
+                  style="background-color: var(--m-green); color: white;"
+                >
+                  Dashboard
+                </NuxtLink>
+                <NuxtLink
+                  to="/auth/login"
+                  @click="logout"
+                  class="px-3 md:px-4 py-2 text-xs md:text-sm rounded-full transition"
+                  style="background-color: var(--white); color: var(--m-green);"
                 >
                   Logout
-                </button>
+                </NuxtLink>
               </div>
             </template>
           </div>
         </div>
       </header>
 
-      <main class="max-w-5xl mx-auto px-4 py-8">
+      <main class="max-w-8/10 mx-auto px-4 py-8">
         <NuxtPage />
       </main>
+
+      <footer class="bg-white">
+        <div class="max-w-8/10 mx-auto px-4 py-8 text-center text-sm text-gray-500">
+         QA Forum. Use for educational purposes only.
+          <span class="text-xs text-gray-400"> V{{ version }}</span>
+        </div>
+      </footer>
     </div>
 </template>
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import { useUser } from '~/composables/useUser'
+import { APP_SETTINGS } from '~/config/settings'
 
+const version = APP_SETTINGS.VERSION
 const router = useRouter()
 const { currentUser, isAuthenticated, logout } = useUser()
 
-const handleLogout = () => {
-  logout()
-  router.push('/auth/login')
-}
+
 </script>
 
 <style scoped>

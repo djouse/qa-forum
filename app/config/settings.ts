@@ -1,4 +1,5 @@
 export const APP_SETTINGS = {
+  VERSION: '1.1.0',
   DEVELOPMENT_MODE: true,
   QUESTIONS_PER_PAGE: 20,
   MAX_FILE_SIZE: 10 * 1024 * 1024, // 10MB
