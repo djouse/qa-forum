@@ -1,63 +1,65 @@
-import { put } from '@vercel/blob'
+import { writeFile, mkdir } from 'fs/promises'
+import { join } from 'path'
+import { APP_SETTINGS } from '~/config/settings'
 
 export default defineEventHandler(async (event) => {
   try {
-    const form = await readFormData(event)
-    const file = form.get('file') as File
+    const formData = await readMultipartFormData(event)
     
-    if (!file || !file.size) {
+    if (!formData || formData.length === 0) {
       throw createError({
         statusCode: 400,
-        message: 'No file provided'
+        statusMessage: 'No file provided'
       })
     }
 
-    // Validate file type (images and PDFs only)
-    const allowedTypes = [
-      'image/jpeg',
-      'image/jpg',
-      'image/png',
-      'image/gif',
-      'image/webp',
-      'application/pdf'
-    ]
-
-    if (!allowedTypes.includes(file.type)) {
+    const file = formData[0]
+    
+    if (!file.filename || !file.data) {
       throw createError({
         statusCode: 400,
-        message: 'Invalid file type. Only images (JPEG, PNG, GIF, WebP) and PDF files are allowed.'
+        statusMessage: 'Invalid file data'
       })
     }
 
-    // Validate file size (max 10MB)
-    const maxSize = 10 * 1024 * 1024 // 10MB in bytes
-    if (file.size > maxSize) {
+    // Check file size
+    if (file.data.length > APP_SETTINGS.MAX_FILE_SIZE) {
       throw createError({
         statusCode: 400,
-        message: 'File too large. Maximum size is 10MB.'
+        statusMessage: `File too large. Maximum size is ${APP_SETTINGS.MAX_FILE_SIZE_MB}MB`
       })
     }
 
-    // Upload to Vercel Blob
-    const blob = await put(file.name, file, {
-      access: 'public',
-      addRandomSuffix: true, // Adds random suffix to prevent name collisions
-    })
+    // Generate unique filename
+    const timestamp = Date.now()
+    const randomId = Math.random().toString(36).substring(2)
+    const fileExtension = file.filename.split('.').pop()
+    const uniqueFilename = `${timestamp}-${randomId}.${fileExtension}`
 
-    // Return file metadata
+    // Create uploads directory if it doesn't exist
+    const uploadsDir = join(process.cwd(), 'public', 'uploads')
+    await mkdir(uploadsDir, { recursive: true })
+
+    // Save file
+    const filePath = join(uploadsDir, uniqueFilename)
+    await writeFile(filePath, file.data)
+
+    // Return file info
+    const fileUrl = `/uploads/${uniqueFilename}`
+    
     return {
       success: true,
       file: {
-        url: blob.url,
-        fileName: file.name,
-        fileType: file.type,
-        fileSize: file.size,
+        url: fileUrl,
+        fileName: file.filename,
+        fileType: file.type || 'application/octet-stream',
+        fileSize: file.data.length
       }
     }
   } catch (error: any) {
     throw createError({
       statusCode: error.statusCode || 500,
-      message: error.message || 'Failed to upload file'
+      statusMessage: error.statusMessage || 'Failed to upload file'
     })
   }
 })

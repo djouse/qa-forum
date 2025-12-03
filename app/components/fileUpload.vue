@@ -64,6 +64,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { APP_SETTINGS } from '~/config/settings'
 
 interface UploadedFile {
   url: string
@@ -79,8 +80,8 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  multiple: true,
-  maxSizeMB: 10,
+  multiple: APP_SETTINGS.ALLOW_MULTIPLE_FILES,
+  maxSizeMB: APP_SETTINGS.MAX_FILE_SIZE_MB,
   modelValue: () => []
 })
 
@@ -93,7 +94,7 @@ const uploading = ref(false)
 const error = ref('')
 const uploadedFiles = ref<UploadedFile[]>(props.modelValue)
 
-const acceptTypes = 'image/jpeg,image/jpg,image/png,image/gif,image/webp,application/pdf'
+const acceptTypes = APP_SETTINGS.ALLOWED_FILE_TYPES.join(',')
 const allowedTypesText = 'Images (JPG, PNG, GIF, WebP) or PDF'
 
 const handleFileSelect = async (event: Event) => {

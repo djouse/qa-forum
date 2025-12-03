@@ -3,7 +3,8 @@
     <!-- Back button -->
     <button
       @click="$router.push('/')"
-      class="mb-6 text-blue-600 hover:text-blue-700 flex items-center gap-2"
+      style="color: var(--m-green);"
+      class="mb-6 hover: flex items-center gap-2"
     >
       ← Back to Questions
     </button>
@@ -421,7 +422,7 @@ const updateQuestionState = async (newState: string, summary: string) => {
 
   try {
     const response = await $fetch(`/api/questions/${questionId}/state`, {
-      method: 'PATCH' as const,
+      method: 'PATCH',
       body: {
         state: newState,
         userId: currentUser.value.id,

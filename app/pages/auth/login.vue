@@ -38,10 +38,10 @@
             <p class="text-sm text-red-600">{{ error }}</p>
           </div>
 
-          <button
+          <button style="background-color: var(--orange);"
             type="submit"
             :disabled="loading"
-            class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition disabled:opacity-50 font-medium"
+            class="w-full  text-white py-3 rounded-lg hover: transition disabled:opacity-50 font-medium"
           >
             {{ loading ? 'Signing in...' : 'Sign In' }}
           </button>
@@ -50,10 +50,31 @@
         <div class="mt-6 text-center">
           <p class="text-sm text-gray-600">
             Don't have an account?
-            <NuxtLink to="/auth/register" class="text-blue-600 hover:text-blue-700 font-medium">
+            <NuxtLink to="/auth/register" style="color: var(--orange);" class="hover:underline font-medium">
               Register here
             </NuxtLink>
           </p>
+        </div>
+
+        <!-- Development Mode Stage Login -->
+        <div v-if="isDevelopmentMode" class="mt-6 border-t pt-6">
+          <p class="text-sm text-gray-500 mb-3 text-center">Development Mode - Quick Login:</p>
+          <div class="flex gap-2">
+            <button
+              @click="stageLogin('student@student.com', 'student')"
+              class="flex-1 py-2 px-3 text-sm border rounded hover:bg-gray-50"
+              style="border-color: var(--grey);"
+            >
+              Student Login
+            </button>
+            <button
+              @click="stageLogin('prof@prof.com', 'professor')"
+              class="flex-1 py-2 px-3 text-sm border rounded hover:bg-gray-50"
+              style="border-color: var(--grey);"
+            >
+              Teacher Login
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -61,12 +82,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUser, type User } from '~/composables/useUser'
+import { APP_SETTINGS } from '~/config/settings'
 
 definePageMeta({
-  layout: false
+  layout: false,
+  middleware: 'guest'
 })
 
 const router = useRouter()
@@ -76,6 +99,14 @@ const email = ref('')
 const name = ref('')
 const loading = ref(false)
 const error = ref('')
+
+const isDevelopmentMode = computed(() => APP_SETTINGS.DEVELOPMENT_MODE)
+
+const stageLogin = async (stageEmail: string, stageName: string) => {
+  email.value = stageEmail
+  name.value = stageName
+  await handleLogin()
+}
 
 const handleLogin = async () => {
   loading.value = true

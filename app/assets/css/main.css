@@ -1,1 +1,33 @@
 @import "tailwindcss";
+
+:root {
+    --m-green: #104f55;
+    --green: #7dd889;
+    --light-green: #ebf8ed;
+    --light-gray: #f8f8f8;
+    --grey: #eee;
+    --grey-m5: #999;
+    --white: #fff;
+    --blue-bell: #a892d8;
+    --orange: #f06543;
+    --inner-side-padding: 65px;
+    --outter-side-padding: 30px;
+    --sections-margin: 200px;
+    --images-radius: 45px;
+}
+
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+html.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+body {
+  font-family: 'Outfit', sans-serif;
+}

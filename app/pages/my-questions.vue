@@ -43,7 +43,7 @@
             {{ question.title }}
           </h3>
           <span 
-            class="ml-4 px-2 py-1 text-xs rounded-full"
+            class="ml-4 px-4 py-1 text-xs rounded-full"
             :class="{
               'bg-green-100 text-green-800': question.state === 'ACTIVE',
               'bg-blue-100 text-blue-800': question.state === 'RESOLVED',
@@ -85,6 +85,10 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUser } from '~/composables/useUser'
+
+definePageMeta({
+  middleware: 'auth'
+})
 
 const router = useRouter()
 const { currentUser, isAuthenticated } = useUser()

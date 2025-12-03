@@ -1,63 +1,69 @@
 <template>
   <div>
     <!-- Ask Question Button (Students Only) -->
-    <div v-if="!isAuthenticated" class="mb-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-      <p class="text-yellow-800">
-        👆 Please <NuxtLink to="/auth/login" class="text-blue-600 hover:text-blue-700 font-medium">sign in</NuxtLink> or 
-        <NuxtLink to="/auth/register" class="text-blue-600 hover:text-blue-700 font-medium">register</NuxtLink> to get started
+    <div v-if="!isAuthenticated" class="mb-6 rounded-lg p-4" style="background-color: var(--light-green); border: 1px solid var(--green);">
+      <p style="color: var(--m-green);">
+        Please <NuxtLink to="/auth/login" class="font-medium" style="color: var(--orange);">sign in</NuxtLink> or 
+        <NuxtLink to="/auth/register" class="font-medium" style="color: var(--orange);">register</NuxtLink> to get started
       </p>
     </div>
     
     <div v-else-if="isStudent" class="mb-6">
       <button
         @click="showQuestionForm = !showQuestionForm"
-        class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+        class="text-white px-4 py-2 rounded-lg transition"
+        style="background-color: var(--orange);"
+        @mouseenter="($event.target as HTMLElement)?.style && (($event.target as HTMLElement).style.opacity = '0.9')"
+        @mouseleave="($event.target as HTMLElement)?.style && (($event.target as HTMLElement).style.opacity = '1')"
       >
         {{ showQuestionForm ? 'Cancel' : 'Ask Question' }}
       </button>
     </div>
     
-    <div v-else class="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
-      <p class="text-blue-800">👨‍🏫 As a teacher, you can answer questions but cannot post new ones</p>
+    <div v-else class="mb-6 rounded-lg p-4" style="background-color: var(--light-green); border: 1px solid var(--green);">
+      <p style="color: var(--m-green);">As a teacher, you can answer questions but cannot post new ones</p>
     </div>
 
     <!-- Question Form -->
-    <div v-if="showQuestionForm && isStudent" class="bg-white rounded-lg shadow p-6 mb-6">
+    <div v-if="showQuestionForm && isStudent" class="rounded-lg shadow p-6 mb-6" style="background-color: var(--light-gray);">
       <h2 class="text-xl font-semibold mb-4">Post a Question</h2>
       <form @submit.prevent="submitQuestion">
         <div class="mb-4">
-          <label class="block text-sm font-medium text-gray-700 mb-2">
-            Title *
-          </label>
+          <label class="block text-sm font-medium mb-2" style="color: #333;">Title *</label>
           <input
             v-model="newQuestion.title"
             type="text"
             required
-            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            class="w-full px-3 py-2 border rounded-lg transition"
+            style="border-color: var(--grey);"
+            @focus="($event.target as HTMLInputElement).style.borderColor = 'var(--orange)'"
+            @blur="($event.target as HTMLInputElement).style.borderColor = 'var(--grey)'"
             placeholder="What's your question?"
           />
         </div>
         <div class="mb-4">
-          <label class="block text-sm font-medium text-gray-700 mb-2">
-            Details *
-          </label>
+          <label class="block text-sm font-medium mb-2" style="color: #333;">Details *</label>
           <textarea
             v-model="newQuestion.content"
             required
             rows="4"
-            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            class="w-full px-3 py-2 border rounded-lg transition"
+            style="border-color: var(--grey);"
+            @focus="($event.target as HTMLTextAreaElement).style.borderColor = 'var(--orange)'"
+            @blur="($event.target as HTMLTextAreaElement).style.borderColor = 'var(--grey)'"
             placeholder="Provide more details about your question..."
           ></textarea>
         </div>
         <div class="grid grid-cols-2 gap-4 mb-4">
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
-              Discipline *
-            </label>
+            <label class="block text-sm font-medium mb-2" style="color: #333;">Discipline *</label>
             <select
               v-model="newQuestion.disciplineId"
               required
-              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              class="w-full px-3 py-2 border rounded-lg transition"
+              style="border-color: var(--grey);"
+              @focus="($event.target as HTMLSelectElement).style.borderColor = 'var(--orange)'"
+              @blur="($event.target as HTMLSelectElement).style.borderColor = 'var(--grey)'"
             >
               <option value="">Select a discipline</option>
               <option v-for="discipline in disciplines" :key="discipline.id" :value="discipline.id">
@@ -66,13 +72,14 @@
             </select>
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
-              Grade Year *
-            </label>
+            <label class="block text-sm font-medium mb-2" style="color: #333;">Grade Year *</label>
             <select
               v-model="newQuestion.gradeYear"
               required
-              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              class="w-full px-3 py-2 border rounded-lg transition"
+              style="border-color: var(--grey);"
+              @focus="($event.target as HTMLSelectElement).style.borderColor = 'var(--orange)'"
+              @blur="($event.target as HTMLSelectElement).style.borderColor = 'var(--grey)'"
             >
               <option value="">Select grade</option>
               <option v-for="grade in [7, 8, 9, 10, 11, 12]" :key="grade" :value="grade">
@@ -81,13 +88,20 @@
             </select>
           </div>
         </div>
-        <div v-if="submitError" class="mb-4 text-sm text-red-600">
+        <div class="mb-4">
+          <label class="block text-sm font-medium mb-2" style="color: #333;">Attachments (optional)</label>
+          <FileUpload v-model="questionAttachments" />
+        </div>
+        <div v-if="submitError" class="mb-4 text-sm" style="color: var(--orange);">
           {{ submitError }}
         </div>
         <button
           type="submit"
           :disabled="submitting"
-          class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
+          class="text-white px-6 py-2 rounded-lg transition disabled:opacity-50"
+          style="background-color: var(--orange);"
+          @mouseenter="!submitting && (($event.target as HTMLButtonElement).style.opacity = '0.9')"
+          @mouseleave="($event.target as HTMLButtonElement).style.opacity = '1'"
         >
           {{ submitting ? 'Submitting...' : 'Submit Question' }}
         </button>
@@ -96,52 +110,30 @@
 
     <!-- Loading State -->
     <div v-if="loading" class="text-center py-12">
-      <div class="inline-block animate-spin h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full"></div>
-      <p class="mt-4 text-gray-600">Loading questions...</p>
+      <div class="inline-block animate-spin h-8 w-8 border-4 rounded-full" style="border-color: var(--orange); border-top-color: transparent;"></div>
+      <p class="mt-4" style="color: var(--grey-m5);">Loading questions...</p>
     </div>
 
     <!-- Error State -->
     <div v-else-if="error" class="text-center py-12">
-      <p class="text-red-600">{{ error }}</p>
-      <button @click="fetchQuestions" class="mt-4 text-blue-600 hover:text-blue-700">
-        Try again
-      </button>
+      <p style="color: var(--orange);">{{ error }}</p>
+      <button @click="fetchQuestions" class="mt-4" style="color: var(--orange);">Try again</button>
     </div>
 
     <!-- Questions List -->
     <div v-else class="space-y-4">
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="text-2xl font-bold">Recent Questions</h2>
-        
-        <!-- Filters -->
-        <div class="flex gap-3">
-          <select
-            v-model="selectedDiscipline"
-            @change="applyFilters"
-            class="px-3 py-1 border border-gray-300 rounded text-sm"
-          >
+      <div class="mb-4">
+        <h2 class="text-xl md:text-2xl font-bold mb-3 md:mb-0">Recent Questions</h2>
+        <div class="flex flex-wrap gap-2 md:gap-3">
+          <select v-model="selectedDiscipline" @change="applyFilters" class="px-2 md:px-3 py-1 border rounded text-xs md:text-sm flex-1 md:flex-none" style="border-color: var(--grey);">
             <option value="">All Disciplines</option>
-            <option v-for="discipline in disciplines" :key="discipline.id" :value="discipline.id">
-              {{ discipline.name }}
-            </option>
+            <option v-for="discipline in disciplines" :key="discipline.id" :value="discipline.id">{{ discipline.name }}</option>
           </select>
-          
-          <select
-            v-model="selectedGrade"
-            @change="applyFilters"
-            class="px-3 py-1 border border-gray-300 rounded text-sm"
-          >
+          <select v-model="selectedGrade" @change="applyFilters" class="px-2 md:px-3 py-1 border rounded text-xs md:text-sm flex-1 md:flex-none" style="border-color: var(--grey);">
             <option value="">All Grades</option>
-            <option v-for="grade in [7, 8, 9, 10, 11, 12]" :key="grade" :value="grade">
-              {{ grade }}º ano
-            </option>
+            <option v-for="grade in [7, 8, 9, 10, 11, 12]" :key="grade" :value="grade">{{ grade }}º ano</option>
           </select>
-          
-          <select
-            v-model="orderBy"
-            @change="applyFilters"
-            class="px-3 py-1 border border-gray-300 rounded text-sm"
-          >
+          <select v-model="orderBy" @change="applyFilters" class="hidden md:block px-3 py-1 border rounded text-sm" style="border-color: var(--grey);">
             <option value="">Recent First</option>
             <option value="discipline">By Discipline</option>
             <option value="gradeYear">By Grade</option>
@@ -152,15 +144,14 @@
       <div
         v-for="question in questions"
         :key="question.id"
-        class="bg-white rounded-lg shadow p-6 hover:shadow-md transition cursor-pointer"
+        class="rounded-lg shadow p-6 hover:shadow-md transition cursor-pointer"
+        style="background-color: var(--light-gray);"
         @click="navigateToQuestion(question.id)"
       >
         <div class="flex items-start justify-between mb-2">
-          <h3 class="text-lg font-semibold text-gray-900 flex-1">
-            {{ question.title }}
-          </h3>
+          <h3 class="text-lg font-semibold flex-1" style="color: #333;">{{ question.title }}</h3>
           <span 
-            class="ml-4 px-2 py-1 text-xs rounded-full"
+            class="ml-4 px-4 py-1 text-xs rounded-full"
             :class="{
               'bg-green-100 text-green-800': question.state === 'ACTIVE',
               'bg-blue-100 text-blue-800': question.state === 'RESOLVED',
@@ -170,14 +161,12 @@
             {{ question.state }}
           </span>
         </div>
-        <p class="text-gray-600 mb-3 line-clamp-2">
-          {{ question.content }}
-        </p>
-        <div class="flex items-center justify-between text-sm text-gray-500">
+        <p class="mb-3 line-clamp-2" style="color: var(--grey-m5);">{{ question.content }}</p>
+        <div class="flex items-center justify-between text-sm" style="color: var(--grey-m5);">
           <div class="flex items-center gap-4">
-            <span>💬 {{ question.answerCount }} answers</span>
+            <span>{{ question.answerCount }} answers</span>
             <span class="text-gray-400">•</span>
-            <span>📚 {{ question.discipline.name }}</span>
+            <span>{{ question.discipline.name }}</span>
             <span class="text-gray-400">•</span>
             <span>{{ question.gradeYear }}º ano</span>
             <span class="text-gray-400">•</span>
@@ -187,7 +176,7 @@
         </div>
       </div>
 
-      <div v-if="questions.length === 0" class="text-center py-12 text-gray-500">
+      <div v-if="questions.length === 0" class="text-center py-12" style="color: var(--grey-m5);">
         No questions yet. Be the first to ask!
       </div>
       
@@ -197,23 +186,71 @@
           @click="prevPage"
           :disabled="!pagination.hasPrev"
           class="px-4 py-2 border rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+          style="border-color: var(--grey);"
         >
           Previous
         </button>
-        
-        <span class="text-sm text-gray-600">
+        <span class="text-sm" style="color: var(--grey-m5);">
           Page {{ pagination.page }} of {{ pagination.totalPages }} ({{ pagination.total }} total)
         </span>
-        
         <button
           @click="nextPage"
           :disabled="!pagination.hasNext"
           class="px-4 py-2 border rounded text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+          style="border-color: var(--grey);"
         >
           Next
         </button>
       </div>
     </div>
+
+    <!-- Login Required Modal -->
+    <Transition
+      enter-active-class="transition-all duration-300 ease-out"
+      enter-from-class="opacity-0"
+      enter-to-class="opacity-100"
+      leave-active-class="transition-all duration-200 ease-in"
+      leave-from-class="opacity-100"
+      leave-to-class="opacity-0"
+    >
+      <div v-if="showLoginModal" class="fixed inset-0 bg-white bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50" @click="showLoginModal = false">
+        <Transition
+          enter-active-class="transition-all duration-300 ease-out"
+          enter-from-class="opacity-0 scale-95 translate-y-4"
+          enter-to-class="opacity-100 scale-100 translate-y-0"
+          leave-active-class="transition-all duration-200 ease-in"
+          leave-from-class="opacity-100 scale-100 translate-y-0"
+          leave-to-class="opacity-0 scale-95 translate-y-4"
+        >
+          <div class="bg-white rounded-lg p-6 w-full max-w-md mx-4" @click.stop>
+        <h3 class="text-lg font-semibold mb-4" style="color: #333;">Login Required</h3>
+        <p class="mb-6" style="color: var(--grey-m5);">You need to sign in to view questions and answers.</p>
+        <div class="flex gap-3">
+          <NuxtLink
+            to="/auth/login"
+            class="flex-1 text-center text-white py-2 px-4 rounded-lg transition hover:opacity-90"
+            style="background-color: var(--orange);"
+          >
+            Sign In
+          </NuxtLink>
+          <NuxtLink
+            to="/auth/register"
+            class="flex-1 text-center py-2 px-4 rounded-lg border transition hover:bg-gray-50"
+            style="border-color: var(--grey); color: #333;"
+          >
+            Register
+          </NuxtLink>
+        </div>
+        <button
+          @click="showLoginModal = false"
+          class="w-full mt-3 text-sm py-2 text-gray-600 hover:text-gray-800"
+        >
+          Cancel
+        </button>
+          </div>
+        </Transition>
+      </div>
+    </Transition>
   </div>
 </template>
 
@@ -234,7 +271,14 @@ const currentPage = ref(1)
 const selectedDiscipline = ref('')
 const selectedGrade = ref('')
 const orderBy = ref('')
-const pagination = ref(null)
+const pagination = ref<{
+  page: number
+  limit: number
+  total: number
+  totalPages: number
+  hasNext: boolean
+  hasPrev: boolean
+} | null>(null)
 
 interface Discipline {
   id: string
@@ -266,6 +310,9 @@ const newQuestion = ref({
   disciplineId: '',
   gradeYear: ''
 })
+
+const questionAttachments = ref([])
+const showLoginModal = ref(false)
 
 const questions = ref<Question[]>([])
 const disciplines = ref<Discipline[]>([])
@@ -346,16 +393,15 @@ const submitQuestion = async () => {
         content: newQuestion.value.content,
         disciplineId: newQuestion.value.disciplineId,
         gradeYear: parseInt(newQuestion.value.gradeYear),
-        authorId: currentUser.value!.id
+        authorId: currentUser.value!.id,
+        attachments: questionAttachments.value
       }
     })
 
     if (response.success) {
-      // Reset form
       newQuestion.value = { title: '', content: '', disciplineId: '', gradeYear: '' }
+      questionAttachments.value = []
       showQuestionForm.value = false
-      
-      // Refresh questions list
       await fetchQuestions()
     }
   } catch (err: any) {
@@ -366,6 +412,10 @@ const submitQuestion = async () => {
 }
 
 const navigateToQuestion = (id: string) => {
+  if (!isAuthenticated.value) {
+    showLoginModal.value = true
+    return
+  }
   router.push(`/question/${id}`)
 }
 
