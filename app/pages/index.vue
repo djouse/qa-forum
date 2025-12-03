@@ -3,8 +3,8 @@
     <div v-if="!isAuthenticated" class="mb-12 rounded-3xl px-16 py-24 md:px-10 md:py-24" style="background-color: var(--m-green);">
       <div class="flex flex-col md:flex-row items-center justify-between gap-12 md:gap-32">
         <div class="flex-1 text-center md:text-left">
-          <h2 class="text-5xl md:text-7xl font-bold mb-8" style="color: white;">Welcome to QA Forum</h2>
-          <p class="text-xl md:text-3xl mb-10" style="color: white;">A platform where students can ask questions and teachers provide expert answers to help with studies.</p>
+          <h2 class="text-5xl md:text-7xl font-bold mb-8" style="color: white;">Welcome to the Forum</h2>
+          <p class="text-xl md:text-3xl mb-10" style="color: white;">A platform where students can share their knowledge and doubts with the teachers.</p>
           <div class="flex flex-col sm:flex-row gap-6">
             <NuxtLink
               to="/auth/login"

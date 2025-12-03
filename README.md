@@ -11,10 +11,10 @@ Nuxt.js application using Prisma ORM - QA Forum for students to ask questions an
 - Have an overview of the forum in a hero container.
 
 **Student Account:**
-- Register as a student or use existing student credentials (development login is available so that testers can do it faster eheh)
-- Can ask and view questions, and see and add answers
+- Register as a student or use existing student credentials
+- Can ask questions, view all questions, and answer questions
 - Access to "Ask Question" page and "My Questions" dashboard
-- Cannot answer questions or manage question states (maybe they should be able to answer to be more interactive??)
+- Cannot manage question states (resolve/cancel)
 
 **Teacher Account:**
 - Register as a teacher or use existing teacher credentials  
@@ -26,7 +26,7 @@ Nuxt.js application using Prisma ORM - QA Forum for students to ask questions an
 ### Key Features to Test
 
 1. **Fake Authentication Flow:** Register/login as both student and teacher using the normal prisma DB without OAuth2.0
-2. **Student Experience:** Ask questions, view personal questions, browse all questions
+2. **Student Experience:** Ask questions, answer questions, view personal questions, browse all questions
 3. **Teacher Experience:** Answer questions, filter by discipline, manage question states
 4. **Question Management:** View question details, add answers, state transitions
 5. **Responsive Design:** Test on mobile and desktop viewports
