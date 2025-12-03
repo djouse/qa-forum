@@ -208,7 +208,7 @@
           rows="4"
           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:border-transparent"
           style="--tw-ring-color: #114F55;"
-          placeholder="Explain why you are {{ pendingState === 'RESOLVED' ? 'resolving' : 'canceling' }} this question..."
+          placeholder="Explain why you are changing the state for this question..."
         ></textarea>
         <div class="flex gap-3 mt-4">
           <button
