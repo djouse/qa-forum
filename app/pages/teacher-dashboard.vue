@@ -1,11 +1,26 @@
 <template>
   <div>
-    <h1 class="text-5xl md:text-6xl font-bold mb-12" style="color: var(--m-green);">Teacher Dashboard</h1>
+    <div class="mb-8">
+      <h1 class="text-5xl md:text-6xl font-bold mb-4" style="color: var(--m-green);">Dashboard</h1>
+      <div class="text-xl" style="color: var(--grey-m5);">
+        <p class="font-semibold">{{ currentUser?.name }}</p>
+        <p>{{ currentUser?.email }}</p>
+      </div>
+    </div>
 
     <!-- My Disciplines -->
     <div class="mb-12">
-      <h2 class="text-3xl md:text-4xl font-bold mb-8" style="color: var(--m-green);">My Disciplines</h2>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="flex items-center justify-between mb-8">
+        <h2 class="text-3xl md:text-4xl font-bold" style="color: var(--m-green);">My Disciplines</h2>
+        <button
+          @click="showDisciplines = !showDisciplines"
+          class="px-4 py-2 rounded-lg transition"
+          style="background-color: var(--grey); color: var(--m-green);"
+        >
+          {{ showDisciplines ? 'Hide' : 'Show' }}
+        </button>
+      </div>
+      <div v-show="showDisciplines" class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div
           v-for="discipline in myDisciplines"
           :key="discipline.id"
@@ -24,7 +39,7 @@
     <!-- Open Questions to Answer -->
     <div>
       <div class="flex items-center justify-between mb-8">
-        <h2 class="text-3xl md:text-4xl font-bold" style="color: var(--m-green);">Open Questions to Answer</h2>
+        <h2 class="text-3xl md:text-4xl font-bold" style="color: var(--m-green);">Open Questions</h2>
         <div class="flex gap-3">
           <select
             v-model="selectedDisciplineFilter"
@@ -108,6 +123,7 @@ const router = useRouter()
 const { currentUser, isTeacher } = useUser()
 
 const loading = ref(true)
+const showDisciplines = ref(true)
 const myDisciplines = ref([])
 const openQuestions = ref([])
 const selectedDisciplineFilter = ref('')

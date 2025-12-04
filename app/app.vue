@@ -1,11 +1,11 @@
 <template>
-  <div class="min-h-screen bg-white">
+  <div class="h-screen bg-white">
       <header class="bg-white">
-        <div class="max-w-8/10 mx-auto px-4 h-20 md:h-32 flex items-center justify-between">
+        <div class="max-w-8/10 mx-auto px-4 h-32 md:h-32 flex items-center justify-between">
           <NuxtLink to="/" class="flex items-center gap-2 md:gap-4">
             <img src="/intuitivo-forum-logo.svg" alt="Forum Logo" class="h-10 md:h-14 w-auto" />
             <div class="flex flex-col leading-tight">
-              <span class="text-xl md:text-2xl font-bold" style="color: var(--m-green);">Forum</span>
+              <span class="text-2xl md:text-3xl font-semibold" style="color: var(--m-green);">Forum</span>
               <span class="hidden md:block text-s" style="color: var(--m-green);">Share the knowledge.</span>
               <span class="hidden md:block text-s" style="color: var(--m-green);">Share the doubts.</span>
             </div>
@@ -45,7 +45,7 @@
                 </div>
 
                 <NuxtLink
-                  :to="currentUser?.role === 'TEACHER' ? '/teacher-dashboard' : '/my-questions'"
+                  :to="currentUser?.role === 'TEACHER' ? '/teacher-dashboard' : '/student-dashboard'"
                   class="px-3 md:px-4 py-2 text-xs md:text-sm rounded-full transition"
                   style="background-color: var(--m-green); color: white;"
                 >

@@ -3,15 +3,18 @@
     <div class="mb-12">
       <div class="flex items-center justify-between mb-4">
         <div>
-          <h1 class="text-5xl md:text-6xl font-bold mb-4" style="color: var(--m-green);">My Questions</h1>
-          <p class="text-xl md:text-2xl" style="color: var(--grey-m5);">Questions you've asked</p>
+          <h1 class="text-5xl md:text-6xl font-bold mb-4" style="color: var(--m-green);">Activity</h1>
+          <div class="mb-4">
+            <p class="text-xl font-semibold" style="color: var(--grey-m5);">{{ currentUser?.name }}</p>
+            <p class="text-lg" style="color: var(--grey-m5);">{{ currentUser?.email }}</p>
+          </div>
         </div>
         <NuxtLink
           to="/ask-question"
-          class="text-white px-8 py-3 rounded-full text-lg font-semibold transition"
+          class="text-white px-8 py-3 rounded-full text-lg font-semibold transition "
           style="background-color: var(--orange);"
         >
-          Ask New Question
+          New Question
         </NuxtLink>
       </div>
     </div>
