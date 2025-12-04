@@ -5,7 +5,7 @@
           <NuxtLink to="/" class="flex items-center gap-2 md:gap-4">
             <img src="/intuitivo-forum-logo.svg" alt="Forum Logo" class="h-10 md:h-14 w-auto" />
             <div class="flex flex-col leading-tight">
-              <span class="text-2xl md:text-3xl font-semibold" style="color: var(--m-green);">Forum</span>
+              <span class="hidden md:block text-2xl md:text-3xl font-semibold" style="color: var(--m-green);">Forum</span>
               <span class="hidden md:block text-s" style="color: var(--m-green);">Share the knowledge.</span>
               <span class="hidden md:block text-s" style="color: var(--m-green);">Share the doubts.</span>
             </div>
